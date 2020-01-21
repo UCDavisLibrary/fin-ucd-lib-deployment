@@ -1,0 +1,153 @@
+version: '3'
+
+###
+# Fin Server from deployed DockerHub container images
+###
+services:
+
+  ###
+  # Font End NodeJS Application Server
+  ###
+  server:
+    image: ucdlib/fin-ucd-server:1.2
+    volumes:
+      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+    ports:
+      - 3001:3001
+    env_file:
+      - .env
+    depends_on:
+      - fcrepo
+      - redis
+      - elasticsearch
+
+  ###
+  # Fedora Repository
+  ###
+  fcrepo:
+    image: ucdlib/fin-fcrepo:1.0.0
+    volumes:
+      - fedora-data:/var/lib/jetty/fedora-data
+      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+    env_file:
+      - .env
+
+  ###
+  # Fedora Postgres Service
+  ###
+  postgres:
+    image: ucdlib/fin-postgres:1.0.0
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+
+  ###
+  # Session, admin store
+  ###
+  redis:
+    image: redis:3.2
+    volumes:
+      - redis-data:/data
+    depends_on:
+      - fcrepo
+
+  ###
+  # UC DAMS Client UI
+  ###
+  ucd-lib-client:
+    image: ucdlib/fin-ucd-lib-client:0.2.0
+    volumes:
+      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+    env_file:
+      - .env
+    depends_on:
+    - elasticsearch
+
+  ###
+  # Search
+  ###
+  elasticsearch:
+    image: ucdlib/fin-elasticsearch:1.0.0
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    depends_on:
+      - fcrepo
+
+  ###
+  # Trusted Proxy for Services
+  ###
+  trustedproxy:
+    image: ucdlib/fin-trusted-proxy:1.0.0
+    volumes:
+      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+    env_file:
+      - .env
+    depends_on:
+      - fcrepo
+
+  ###
+  # IIIF Service
+  ###
+  loris:
+    image: ucdlib/fin-loris:1.0.1
+    depends_on:
+      - fcrepo
+    env_file:
+      - .env
+    volumes:
+      - loris-cache:/var/cache/loris
+
+  ###
+  # Tesseract OCR Services
+  ###
+  tesseract:
+    image: ucdlib/fin-tesseract:0.0.1
+    volumes:
+      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+    env_file:
+      - .env
+    depends_on:
+    - server
+
+  ###
+  # ES Indexer
+  ###
+  essync:
+    image: ucdlib/fin-essync:0.1.0
+    volumes:
+      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+    env_file:
+      - .env
+    depends_on:
+    - server
+
+  ###
+  # CAS AuthenticationService
+  ###
+  cas:
+    image: ucdlib/fin-cas:0.0.1
+    volumes:
+      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+    env_file:
+      - .env
+    depends_on:
+    - server
+
+
+###
+# Docker data volumes
+###
+volumes:
+  fedora-data:
+    driver: local
+  pg-data:
+    driver: local
+  es-data:
+    driver: local
+  redis-data:
+    driver: local
+  loris-cache:
+    driver: local
