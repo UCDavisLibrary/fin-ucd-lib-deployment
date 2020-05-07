@@ -42,6 +42,7 @@ CAS_SERVICE_REPO_URL=$GITHUB_ORG_URL/$CAS_SERVICE_REPO_NAME
 
 # Docker Hub
 UCD_LIB_DOCKER_ORG=ucdlib
+DOCKER_CACHE_TAG="latest-build"
 
 # Docker Images
 FCREPO_IMAGE_NAME=fin-fcrepo
@@ -57,7 +58,6 @@ LORIS_IMAGE_NAME=fin-loris-service
 TESSERACT_IMAGE_NAME=fin-tesseract-service
 CAS_IMAGE_NAME=fin-cas-service
 UCD_LIB_SERVER_IMPL=fin-ucd-lib-server-impl
-
 
 
 # Git
