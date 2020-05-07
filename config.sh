@@ -1,34 +1,70 @@
 #! /bin/bash
 
 ######### MAIN CONFIG ##########
-# Set your main build setup here
+# Setup your application deployment here
 ################################
 
-# Main version number we are tagging the app with.  This should
-# match the fin-ucd-lib-deployment tag number as well.  Always update
+# Main version number we are tagging the app with. Always update
 # this when you cut a new version of the app!
-APP_VERSION=1.2
+APP_VERSION=1.3.0
 
+CORE_SERVER_REPO_TAG=deployment
+UCD_LIB_SERVER_REPO_TAG=bag-of-files
+LORIS_SERVICE_REPO_TAG=v1.0.0
+TESSERACT_SERVICE_REPO_TAG=v1.0.0
+CAS_SERVICE_REPO_TAG=v1.0.0
+
+#### End main config ####
+
+
+# Repositories
+GITHUB_ORG_URL=https://github.com/UCDavisLibrary
+
+## Core Server
+CORE_SERVER_REPO_NAME=fin-server
+CORE_SERVER_REPO_URL=$GITHUB_ORG_URL/$CORE_SERVER_REPO_NAME
+
+## UCD Library Server
+UCD_LIB_SERVER_REPO_NAME=fin-ucd-lib-server
+UCD_LIB_SERVER_REPO_URL=$GITHUB_ORG_URL/$UCD_LIB_SERVER_REPO_NAME
+
+## Loris Service
+LORIS_SERVICE_REPO_NAME=fin-service-loris
+LORIS_SERVICE_REPO_URL=$GITHUB_ORG_URL/$LORIS_SERVICE_REPO_NAME
+
+## Loris Service
+TESSERACT_SERVICE_REPO_NAME=fin-service-loris
+TESSERACT_SERVICE_REPO_URL=$GITHUB_ORG_URL/$TESSERACT_SERVICE_REPO_NAME
+
+## CAS Service
+CAS_SERVICE_REPO_NAME=fin-service-cas
+CAS_SERVICE_REPO_URL=$GITHUB_ORG_URL/$CAS_SERVICE_REPO_NAME
+
+# Docker Hub
 UCD_LIB_DOCKER_ORG=ucdlib
-FIN_UCD_SERVER_NAME=fin-ucd-server
-UCD_CORE_SERVER_NAME=fin-ucd-core-server
 
-UCD_SERVER_VERSION=$APP_VERSION
+# Docker Images
+FCREPO_IMAGE_NAME=fin-fcrepo
+POSTGRES_IMAGE_NAME=fin-postgres
+NODE_UTILS_IMAGE_NAME=fin-node-utils
+SERVER_IMAGE_NAME=fin-server
+TRUSTED_PROXY_IMAGE_NAME=fin-trusted-proxy
+ELASTIC_SEARCH_IMAGE_NAME=fin-elasticsearch
+UCD_LIB_SERVER_IMAGE_NAME=fin-ucd-lib-server
+ESSYNC_IMAGE_NAME=fin-essync-service
+UCD_LIB_CLIENT_IMAGE_NAME=fin-ucd-lib-client
+LORIS_IMAGE_NAME=fin-loris-service
+TESSERACT_IMAGE_NAME=fin-tesseract-service
+CAS_IMAGE_NAME=fin-cas-service
+UCD_LIB_SERVER_IMPL=fin-ucd-lib-server-impl
 
-UCD_CORE_SERVER_VERSION=1.0.0
-FCREPO_VERSION=1.0.0
-PG_VERSION=1.0.0
-ELASTIC_SEARCH_VERSION=1.0.0
-TRUSTED_PROXY_VERSION=1.0.0
 
-UCD_LIB_CLIENT_VERSION=0.2.0
-ESSYNC_VERSION=0.1.0
-CAS_VERSION=0.0.1
 
-LORIS_VERSION=1.0.1
-TESSERACT_VERSION=0.0.1
+# Git
+GIT=git
+GIT_CLONE="$GIT clone"
 
-TEMPLATE_VAR_ARRAY=( "UCD_SERVER_VERSION" \
-  "UCD_CORE_SERVER_VERSION" "FCREPO_VERSION" "PG_VERSION" \
-  "ELASTIC_SEARCH_VERSION" "TRUSTED_PROXY_VERSION" "UCD_LIB_CLIENT_VERSION" \
-  "ESSYNC_VERSION" "CAS_VERSION" "LORIS_VERSION" "TESSERACT_VERSION")
+# directory we are going to cache our various git repos at different tags
+# if using pull.sh or the directory we will look for repositories (can by symlinks)
+# if local development
+REPOSITORY_DIR=repositories

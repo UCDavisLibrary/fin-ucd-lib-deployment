@@ -9,7 +9,7 @@ services:
   # Font End NodeJS Application Server
   ###
   server:
-    image: ucdlib/fin-ucd-server:1.2
+    image: ucdlib/fin-ucd-lib-server-impl:1.2
     volumes:
       - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
     ports:
@@ -25,7 +25,7 @@ services:
   # Fedora Repository
   ###
   fcrepo:
-    image: ucdlib/fin-fcrepo:1.0.0
+    image: ucdlib/fin-fcrepo:bag-of-files
     volumes:
       - fedora-data:/var/lib/jetty/fedora-data
       - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
@@ -36,9 +36,21 @@ services:
   # Fedora Postgres Service
   ###
   postgres:
-    image: ucdlib/fin-postgres:1.0.0
+    image: ucdlib/fin-postgres:bag-of-files
     volumes:
       - pg-data:/var/lib/postgresql/data
+
+  ###
+  # Trusted Proxy for Services
+  ###
+  trustedproxy:
+    image: ucdlib/fin-trusted-proxy:bag-of-files
+    volumes:
+      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+    env_file:
+      - .env
+    depends_on:
+      - fcrepo
 
   ###
   # Session, admin store
@@ -54,7 +66,7 @@ services:
   # UC DAMS Client UI
   ###
   ucd-lib-client:
-    image: ucdlib/fin-ucd-lib-client:0.2.0
+    image: ucdlib/fin-ucd-lib-client:bag-of-files
     volumes:
       - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
     env_file:
@@ -63,10 +75,22 @@ services:
     - elasticsearch
 
   ###
+  # ES Indexer
+  ###
+  essync:
+    image: ucdlib/fin-essync:bag-of-files
+    volumes:
+      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+    env_file:
+      - .env
+    depends_on:
+    - server
+
+  ###
   # Search
   ###
   elasticsearch:
-    image: ucdlib/fin-elasticsearch:1.0.0
+    image: ucdlib/fin-elasticsearch:bag-of-files
     ulimits:
       memlock:
         soft: -1
@@ -77,22 +101,10 @@ services:
       - fcrepo
 
   ###
-  # Trusted Proxy for Services
-  ###
-  trustedproxy:
-    image: ucdlib/fin-trusted-proxy:1.0.0
-    volumes:
-      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
-    env_file:
-      - .env
-    depends_on:
-      - fcrepo
-
-  ###
   # IIIF Service
   ###
   loris:
-    image: ucdlib/fin-loris:1.0.1
+    image: ucdlib/fin-loris:master
     depends_on:
       - fcrepo
     env_file:
@@ -104,19 +116,7 @@ services:
   # Tesseract OCR Services
   ###
   tesseract:
-    image: ucdlib/fin-tesseract:0.0.1
-    volumes:
-      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
-    env_file:
-      - .env
-    depends_on:
-    - server
-
-  ###
-  # ES Indexer
-  ###
-  essync:
-    image: ucdlib/fin-essync:0.1.0
+    image: ucdlib/fin-tesseract:master
     volumes:
       - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
     env_file:
@@ -128,7 +128,7 @@ services:
   # CAS AuthenticationService
   ###
   cas:
-    image: ucdlib/fin-cas:0.0.1
+    image: ucdlib/fin-cas:master
     volumes:
       - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
     env_file:
