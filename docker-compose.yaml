@@ -9,7 +9,7 @@ services:
   # Font End NodeJS Application Server
   ###
   server:
-    image: ucdlib/fin-ucd-lib-server-impl:1.2
+    image: ucdlib/fin-ucd-lib-server-impl:1.3.0
     volumes:
       - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
     ports:
@@ -25,7 +25,7 @@ services:
   # Fedora Repository
   ###
   fcrepo:
-    image: ucdlib/fin-fcrepo:bag-of-files
+    image: ucdlib/fin-fcrepo:deployment
     volumes:
       - fedora-data:/var/lib/jetty/fedora-data
       - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
@@ -36,7 +36,7 @@ services:
   # Fedora Postgres Service
   ###
   postgres:
-    image: ucdlib/fin-postgres:bag-of-files
+    image: ucdlib/fin-postgres:deployment
     volumes:
       - pg-data:/var/lib/postgresql/data
 
@@ -44,7 +44,7 @@ services:
   # Trusted Proxy for Services
   ###
   trustedproxy:
-    image: ucdlib/fin-trusted-proxy:bag-of-files
+    image: ucdlib/fin-trusted-proxy:deployment
     volumes:
       - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
     env_file:
@@ -104,7 +104,7 @@ services:
   # IIIF Service
   ###
   loris:
-    image: ucdlib/fin-loris:master
+    image: ucdlib/fin-loris:v1.0.0
     depends_on:
       - fcrepo
     env_file:
@@ -116,7 +116,7 @@ services:
   # Tesseract OCR Services
   ###
   tesseract:
-    image: ucdlib/fin-tesseract:master
+    image: ucdlib/fin-tesseract:v1.0.0
     volumes:
       - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
     env_file:
@@ -128,7 +128,7 @@ services:
   # CAS AuthenticationService
   ###
   cas:
-    image: ucdlib/fin-cas:master
+    image: ucdlib/fin-cas:v1.0.0
     volumes:
       - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
     env_file:
