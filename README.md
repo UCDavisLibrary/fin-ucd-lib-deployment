@@ -5,7 +5,7 @@
 This repository stores the definition of the UC Davis DAMS fin deployment.
 
 A fin application deployment is a series of Github repositories each containing 
-docker containers.  The docker containers will be built and tagged based on
+docker containers for various fin services.  The docker containers will be built and tagged based on
 the defined repository tags/branchs (*see below for note on this) within [config.sh](./config.sh).
 
 The following repositories are (currently) used to create the UC Davis Library DAMS deployment:
@@ -30,7 +30,7 @@ The following repositories are (currently) used to create the UC Davis Library D
 Additionally this repository defines:
   - `fin-ucd-lib-server-impl` Extends `fin-ucd-lib-server` registering IIIF, Tesseract and CAS services.  Adds fin env tags for all containers used in build.
 
-*Note: When deploying to production always use respository version tags in deployment definition (config.sh).  However when deploying to development environments which change rapidly as bugs are fixed and features are added, it is ok to used branches in the deployments definition.  When branches are used and new images are built, the latest versions for these branches will be pulled for the build.  You can kick off dev builds with the ```submit.sh``` script to create images without changing the deployment definition.
+*Note: When deploying to production always use respository version tags in deployment definition (config.sh).  However when deploying to development environments which change rapidly as bugs are fixed and features are added, it is ok to use branches in the deployments definition.  When branches are used and new images are built, the latest versions for these branches will be pulled for the build.  You can kick off dev builds with the ```submit.sh``` script to create images without changing the deployment definition.
 
 # Creating New Deployment Images
 
@@ -38,10 +38,10 @@ To create a new deployment:
   - First, make sure you have modified your code, commited to appropriate repository and added a new version tags to the repository.
   - Update the ```config.sh``` file with the updated repository tags or branches. 
   - Update the main ```APP_VERSION``` number in ```config.sh```
-  - Run ```./generate.sh``` to create a new ```docker-compose.yaml``` file with updated tags
+  - Run ```./templates/generate.sh``` to create a new ```docker-compose.yaml``` file with updated tags
   - Commit your changes to this repo to GitHub
   - Tag your commit with the same version number as `APP_VERSION` and push tag to Github
-  - Once a new tag is pushed to Github Google Cloud Build will automatically create new images and push them to DockerHub
+  - Once a new tag is pushed to Github, Google Cloud Build will automatically create new images and push them to DockerHub
 
 For development builds where you are using branches in the deployment definition, you can call ```submit.sh`` to kick off new builds.
 
@@ -53,7 +53,7 @@ To run a fin application deployment:
   - run ```docker-compose up -d``` in root directory
     - Note: many of the containers require a `webapp-service-account.json` to exist in the root directory.
 
-If you were already running a deployment make sure and
+If you were already running a deployment and want to update the version of the application:
   - ```docker-compose down``` Stop the application
   - ```git checkout [tag]``` pull this repository to the desired application version
   - ```docker-compose pull``` pull the new images
