@@ -15,6 +15,6 @@ echo "$content" > ../docker-compose.yaml
 
 content=$(cat local-dev.yaml)
 for key in ${TEMPLATE_VAR_ARRAY[@]}; do
-  content=$(echo "$content" | sed "s/{{$key}}/${!key}/g") 
+  content=$(echo "$content" | sed "s/{{$key}}/local-dev/g") 
 done
 echo "$content" > ../fin-local-dev/docker-compose.yaml

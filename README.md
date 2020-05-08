@@ -1,6 +1,8 @@
 
 
-# Overview
+# UC Davis DAMS - Fin Deployment
+
+## Deployment Overview
 
 This repository stores the definition of the UC Davis DAMS fin deployment.
 
@@ -32,7 +34,7 @@ Additionally this repository defines:
 
 *Note: When deploying to production always use respository version tags in deployment definition (config.sh).  However when deploying to development environments which change rapidly as bugs are fixed and features are added, it is ok to use branches in the deployments definition.  When branches are used and new images are built, the latest versions for these branches will be pulled for the build.  You can kick off dev builds with the ```submit.sh``` script to create images without changing the deployment definition.
 
-# Creating New Deployment Images
+## Creating New Deployment Images
 
 To create a new deployment:
   - First, make sure you have modified your code, commited to appropriate repository and added a new version tags to the repository.
@@ -45,11 +47,21 @@ To create a new deployment:
 
 For development builds where you are using branches in the deployment definition, you can call ```submit.sh`` to kick off new builds.
 
-# Running a Deployment
+## Running a Deployment
 
 To run a fin application deployment:
   - Pull this repository ```git clone https://github.com/UCDavisLibrary/fin-ucd-lib-deployment```
   - Checkout tag for version of application you wish to run ```git checkout [tag]```
+  - Make sure you have a `.env` file in the root directory.  Here is a sample:
+
+```
+FIN_URL=https://sandbox.dams.library.ucdavis.edu
+FIN_ENV=prod
+CAS_URL=https://ssodev.ucdavis.edu/cas
+JWT_ISSUER=library.ucdavis.edu
+JWT_SECRET=[your secret]
+```
+
   - run ```docker-compose up -d``` in root directory
     - Note: many of the containers require a `webapp-service-account.json` to exist in the root directory.
 
@@ -59,10 +71,90 @@ If you were already running a deployment and want to update the version of the a
   - ```docker-compose pull``` pull the new images
   - ```docker-compose up -d``` start the application
 
-# Verifing a Deployment
+## Verifing a Deployment
 
 The ```fin-ucd-lib-server-impl``` will contain environment variables containing repository git hashes and tags used in the build.  Additionaly ```/fin/info``` will show you these same tags as a rest endpoint.
 
-# Developing on your local machine
+# Developing on Your Local Machine
 
-WIP
+## Local Development Overview
+
+Working on code within docker containers can provide challanges.  The following setup is not required; you can build, stop and start fresh containers as you develop, though this process can be cumbersome and slow.  We will use the practice of mounting local filesystem volumes into containers so code changes are applied in real time.  Additionaly, if you server is being worked on and restarts are required for those changes to show, the following pattern is preferred. 
+
+In the `fin-local-dev/docker-compose.yaml` file, set the services command to:
+
+```yaml
+command: bash -c 'tail -f /dev/null'
+```
+
+This will start the container up without running the default process.  Next start the cluster
+
+```bash
+cd fin-local-dev
+docker-compose up -d
+```
+
+Finally, open a tty connection running bash to the container and start the server from within the container
+
+```bash
+docker-compose exec ucd-lib-client bash
+node /server
+```
+
+No if you want to restart the server, you can simply type `Ctrl+C` to kill the server and then run `node /server` again without having to restart the entire container.
+
+## Local Development Setup
+
+First, clone this repository to your local disk and checkout the version/tag you want to work from.
+
+You can generate a new development docker-compose.yaml script via `./templates/generate.sh`.  This will create a new docker-compose.yaml in `/fin-local-dev`.  Note, git ignores this yaml file so you can make local changes that won't effect other developers, those these changes will be wiped each time your run `./templates/generate.sh`.
+
+You will need to create a `.env` file in the `/fin-local-dev` directory, here is a sample:
+
+```.env
+JWT_SECRET=[your secret here]
+JWT_ISSUER=library.ucdavis.edu
+JWT_TTL=86400
+JWT_VERBOSE=false
+FIN_URL=http://localhost:3000
+```
+
+Now, create the repositories folder inside `fin-local-dev`
+
+```bash
+mkdir fin-local-dev/repositories
+```
+
+Somewhere on disk checkout the all repositories required for this deployment for Fin.  As of this writing there are five, check `config.sh` for required repositories.  Make sure you check each out the correct branch for each repository.  Note, this part is not automated as we do not want to accidently remove any changes you may have made.  It is up to you the developer to ensure your development repositories are at the same branch/tag as this deployment.
+
+```
+git clone https://github.com/UCDavisLibrary/fin-server
+git clone https://github.com/UCDavisLibrary/fin-ucd-lib-server
+# ...
+```
+
+Then you want to create symbolic links to each repository from the `fin-local-dev/repositories` directory.
+
+```
+cd fin-local-dev/repositories
+ln -s ../../fin-server .
+ln -s ../../fin-ucd-lib-server .
+# ...
+```
+
+Finally, create the `:local-dev` tagged images used by the `fin-local-dev/docker-compose.yaml` file.
+
+```
+./fin-local-dev/build.sh
+```
+
+This build script uses Docker BUILDKIT which should make subsequent builds very fast.  You should never push these local-dev images to Docker Hub.
+
+## Run Local Development
+
+After completing the local development setup, simply:
+
+```
+cd fin-local-dev
+docker-compose up
+```

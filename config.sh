@@ -52,11 +52,11 @@ SERVER_IMAGE_NAME=fin-server
 TRUSTED_PROXY_IMAGE_NAME=fin-trusted-proxy
 ELASTIC_SEARCH_IMAGE_NAME=fin-elasticsearch
 UCD_LIB_SERVER_IMAGE_NAME=fin-ucd-lib-server
-ESSYNC_IMAGE_NAME=fin-essync-service
+ESSYNC_IMAGE_NAME=fin-essync
 UCD_LIB_CLIENT_IMAGE_NAME=fin-ucd-lib-client
-LORIS_IMAGE_NAME=fin-loris-service
-TESSERACT_IMAGE_NAME=fin-tesseract-service
-CAS_IMAGE_NAME=fin-cas-service
+LORIS_IMAGE_NAME=fin-loris
+TESSERACT_IMAGE_NAME=fin-tesseract
+CAS_IMAGE_NAME=fin-cas
 UCD_LIB_SERVER_IMPL=fin-ucd-lib-server-impl
 
 

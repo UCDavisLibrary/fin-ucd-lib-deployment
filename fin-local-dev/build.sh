@@ -1,7 +1,7 @@
 #! /bin/bash
 
 set -e
-ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )/.."
+ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd $ROOT_DIR
 source ../config.sh
 
@@ -46,7 +46,7 @@ docker build \
   --build-arg CORE_SERVER_REPO_HASH=${CORE_SERVER_REPO_HASH} \
   -t $UCD_LIB_DOCKER_ORG/$SERVER_IMAGE_NAME:$CORE_SERVER_REPO_TAG \
   --build-arg BUILDKIT_INLINE_CACHE=1 \
-  $REPOSITORY_DIR/$CORE_SERVER_REPO_NAME/node-utils
+  $REPOSITORY_DIR/$CORE_SERVER_REPO_NAME/server
 
 # Core Server - trusted proxy
 docker build \
