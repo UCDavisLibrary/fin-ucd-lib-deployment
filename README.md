@@ -20,14 +20,14 @@ The following repositories are (currently) used to create the UC Davis Library D
   - [fin-ucd-lib-server](https://github.com/UCDavisLibrary/fin-ucd-lib-server)
     - `fin-elasticsearch` Powers front end client search interface
     - `fin-ucd-lib-server` Extends `fin-server` adding transforms for essync, registers essync and ucd-lib-client services
-    - `fin-essync-service` Service to synchronize changes from fcrepo to elastic search
+    - `fin-essync` Service to synchronize changes from fcrepo to elastic search
     - `fin-ucd-lib-client` UC Davis DAMS front end client
   - [fin-service-loris](https://github.com/UCDavisLibrary/fin-service-loris)
-    - `fin-loris-service` IIIF Image service
+    - `fin-loris` IIIF Image service
   - [fin-service-tesseract](https://github.com/UCDavisLibrary/fin-service-tesseract)
-    - `fin-tesseract-service` Tesseract OCR service
+    - `fin-tesseract` Tesseract OCR service
   - [fin-cas-service](https://github.com/UCDavisLibrary/fin-service-tesseract)
-    - `fin-cas-service` CAS authentication service
+    - `fin-cas` CAS authentication service
 
 Additionally this repository defines:
   - `fin-ucd-lib-server-impl` Extends `fin-ucd-lib-server` registering IIIF, Tesseract and CAS services.  Adds fin env tags for all containers used in build.
