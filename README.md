@@ -62,10 +62,18 @@ JWT_ISSUER=library.ucdavis.edu
 JWT_SECRET=[your secret]
 ```
 
-  - run ```docker-compose up -d``` in root directory
-    - Note: many of the containers require a `webapp-service-account.json` to exist in the root directory.
+Note: To enable Google Cloud Logging you must add the mount path for `webapp-service-account.json` file.  If you place it in the root directory, add the following to your `.env` file:
+
+```
+GCLOUD_SERVICE_ACCOUNT_MOUNT=./webapp-service-account.json
+```
+
+  - finally run ```docker-compose up -d``` in root directory
+
+## Updating a Deployment
 
 If you were already running a deployment and want to update the version of the application:
+
   - ```docker-compose down``` Stop the application
   - ```git checkout [tag]``` pull this repository to the desired application version
   - ```docker-compose pull``` pull the new images

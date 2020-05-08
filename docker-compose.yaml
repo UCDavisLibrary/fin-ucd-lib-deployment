@@ -9,11 +9,11 @@ services:
   # Font End NodeJS Application Server
   ###
   server:
-    image: ucdlib/fin-ucd-lib-server-impl:1.3.0
+    image: ucdlib/fin-ucd-lib-server-impl:v1.3.2
     volumes:
-      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
     ports:
-      - 3001:3001
+      - ${HOST_PORT:-3001}:3001
     env_file:
       - .env
     depends_on:
@@ -28,7 +28,7 @@ services:
     image: ucdlib/fin-fcrepo:deployment
     volumes:
       - fedora-data:/var/lib/jetty/fedora-data
-      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
     env_file:
       - .env
 
@@ -46,7 +46,7 @@ services:
   trustedproxy:
     image: ucdlib/fin-trusted-proxy:deployment
     volumes:
-      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
     env_file:
       - .env
     depends_on:
@@ -68,7 +68,7 @@ services:
   ucd-lib-client:
     image: ucdlib/fin-ucd-lib-client:bag-of-files
     volumes:
-      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
     env_file:
       - .env
     depends_on:
@@ -80,7 +80,7 @@ services:
   essync:
     image: ucdlib/fin-essync:bag-of-files
     volumes:
-      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
     env_file:
       - .env
     depends_on:
@@ -116,9 +116,9 @@ services:
   # Tesseract OCR Services
   ###
   tesseract:
-    image: ucdlib/fin-tesseract:v1.0.0
+    image: ucdlib/fin-tesseract:v1.0.1
     volumes:
-      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
     env_file:
       - .env
     depends_on:
@@ -128,9 +128,9 @@ services:
   # CAS AuthenticationService
   ###
   cas:
-    image: ucdlib/fin-cas:v1.0.0
+    image: ucdlib/fin-cas:v1.0.1
     volumes:
-      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
     env_file:
       - .env
     depends_on:
@@ -150,4 +150,6 @@ volumes:
   redis-data:
     driver: local
   loris-cache:
+    driver: local
+  service-account:
     driver: local

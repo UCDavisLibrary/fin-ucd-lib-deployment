@@ -11,9 +11,9 @@ services:
   server:
     image: ucdlib/fin-ucd-lib-server-impl:{{APP_VERSION}}
     volumes:
-      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
     ports:
-      - 3001:3001
+      - ${HOST_PORT:-3001}:3001
     env_file:
       - .env
     depends_on:
@@ -28,7 +28,7 @@ services:
     image: ucdlib/fin-fcrepo:{{CORE_SERVER_REPO_TAG}}
     volumes:
       - fedora-data:/var/lib/jetty/fedora-data
-      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
     env_file:
       - .env
 
@@ -46,7 +46,7 @@ services:
   trustedproxy:
     image: ucdlib/fin-trusted-proxy:{{CORE_SERVER_REPO_TAG}}
     volumes:
-      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
     env_file:
       - .env
     depends_on:
@@ -68,7 +68,7 @@ services:
   ucd-lib-client:
     image: ucdlib/fin-ucd-lib-client:{{UCD_LIB_SERVER_REPO_TAG}}
     volumes:
-      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
     env_file:
       - .env
     depends_on:
@@ -80,7 +80,7 @@ services:
   essync:
     image: ucdlib/fin-essync:{{UCD_LIB_SERVER_REPO_TAG}}
     volumes:
-      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
     env_file:
       - .env
     depends_on:
@@ -118,7 +118,7 @@ services:
   tesseract:
     image: ucdlib/fin-tesseract:{{TESSERACT_SERVICE_REPO_TAG}}
     volumes:
-      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
     env_file:
       - .env
     depends_on:
@@ -130,7 +130,7 @@ services:
   cas:
     image: ucdlib/fin-cas:{{CAS_SERVICE_REPO_TAG}}
     volumes:
-      - ./webapp-service-account.json:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
     env_file:
       - .env
     depends_on:
@@ -150,4 +150,6 @@ volumes:
   redis-data:
     driver: local
   loris-cache:
+    driver: local
+  service-account:
     driver: local
