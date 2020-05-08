@@ -6,7 +6,7 @@
 
 # Main version number we are tagging the app with. Always update
 # this when you cut a new version of the app!
-APP_VERSION=1.3.0
+APP_VERSION=v1.3.1
 
 CORE_SERVER_REPO_TAG=deployment
 UCD_LIB_SERVER_REPO_TAG=bag-of-files
