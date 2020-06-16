@@ -44,7 +44,7 @@ To create a new deployment:
 - Tag your commit with the same version number as `APP_VERSION` and push tag to Github
 - Once a new tag is pushed to Github, Google Cloud Build will automatically create new images and push them to DockerHub
 
-For development builds where you are using branches in the deployment definition, you can call ```submit.sh`` to kick off new builds.
+For development builds where you are using branches in the deployment definition, you can call ```submit.sh``` to kick off new builds.
 
 ## Running a Deployment
 
