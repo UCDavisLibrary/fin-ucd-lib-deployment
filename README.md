@@ -63,8 +63,11 @@ JWT_SECRET=[your secret]
 ```
 
 To use elastic search in docker for windows, you must making the following edit using the Ubuntu Subsystem for Linux (WSL) terminal:
+
+```bash
 sudo sysctl -w vm.max_map_count=262144
 vm.max_map_count = 262144
+```
 
 Note: To enable Google Cloud Logging you must add the mount path for `webapp-service-account.json` file.  If you place it in the root directory, add the following to your `.env` file:
 
