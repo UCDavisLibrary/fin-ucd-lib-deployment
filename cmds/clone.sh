@@ -2,8 +2,8 @@
 
 set -e
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-cd $ROOT_DIR
-source ../config.sh
+cd $ROOT_DIR/..
+source config.sh
 
 # Wipe the current repository dir
 if [ -d $REPOSITORY_DIR ] ; then
@@ -24,7 +24,7 @@ $GIT_CLONE $UCD_LIB_SERVER_REPO_URL.git \
   $REPOSITORY_DIR/$UCD_LIB_SERVER_REPO_NAME
 
 ## Loris Service
-
+$GIT_CLONE $LORIS_SERVICE_REPO_URL.git \
   --branch $LORIS_SERVICE_REPO_TAG \
   --depth 1 \
   $REPOSITORY_DIR/$LORIS_SERVICE_REPO_NAME

@@ -2,10 +2,8 @@
 
 set -e
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-cd $ROOT_DIR
-source ../config.sh
-
-REPOSITORY_DIR=$ROOT_DIR/../$REPOSITORY_DIR
+cd $ROOT_DIR/..
+source config.sh
 
 echo "Starting docker build"
 
@@ -148,4 +146,4 @@ docker build \
   --build-arg CAS_SERVICE_REPO_HASH=${CAS_SERVICE_REPO_HASH} \
   -t $UCD_LIB_SERVER_IMPL:$APP_VERSION \
   --cache-from $UCD_LIB_SERVER_IMPL:$DOCKER_CACHE_TAG \
-  ../ucd-lib-server-impl
+  ucd-lib-server-impl
