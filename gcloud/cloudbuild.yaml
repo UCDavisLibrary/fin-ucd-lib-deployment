@@ -15,17 +15,23 @@ steps:
   - name: "gcr.io/cloud-builders/docker"
     entrypoint: "bash"
     args: ["-c", "docker login --username=libosdev --password-stdin < pass.txt"]
-  
+
   - name: gcr.io/cloud-builders/git
     entrypoint: "bash"
-    args: ["-c", "./gcloud/pull.sh"]
+    args: ["-c", "./cmds/clone.sh"]
 
   - name: gcr.io/cloud-builders/docker
     entrypoint: "bash"
-    args: ["-c", "./gcloud/build.sh"]
+    args: ["-c", "./cmds/pull.sh"]
 
   - name: gcr.io/cloud-builders/docker
     entrypoint: "bash"
-    args: ["-c", "./gcloud/push.sh"]
+    args: ["-c", "./cmds/build.sh"]
+    env: 
+      - 'GCLOUD_BUILD=true'
+
+  - name: gcr.io/cloud-builders/docker
+    entrypoint: "bash"
+    args: ["-c", "./cmds/push.sh"]
 
 timeout: 1800s
