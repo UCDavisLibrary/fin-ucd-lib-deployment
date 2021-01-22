@@ -75,7 +75,18 @@ Note: To enable Google Cloud Logging you must add the mount path for `webapp-ser
 GCLOUD_SERVICE_ACCOUNT_MOUNT=./webapp-service-account.json
 ```
 
-- finally run ```docker-compose up -d``` in root directory
+- run ```docker-compose up -d``` in root directory
+
+If you are beginning from scatch, with no saved volumes, you will also need to add your admins, so that you can access the site.  Adding admins can be done from any client, there is no need to run this on the server.  You will however need the server secret to login.  These are the `JWT_SECRET` and `JWT_ISSUER` from your server environment.  The following snippet shows how to add a number of admins.
+
+```bash
+me=quinn
+admins=jrmerz eanebeker quinn
+fin login --super-user ${me}@ucdavis.edu  # It wll prompt for your SECRET and ISSUER
+for i in $admins; do
+  fin add-admin $i@ucdavis.edu
+done
+```
 
 ## Updating a Deployment
 
