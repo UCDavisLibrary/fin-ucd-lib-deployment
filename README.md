@@ -81,10 +81,10 @@ If you are beginning from scatch, with no saved volumes, you will also need to a
 
 ```bash
 me=quinn
-admins=jrmerz eanebeker quinn
+admins=jrmerz enebeker quinn
 fin login --super-user ${me}@ucdavis.edu  # It wll prompt for your SECRET and ISSUER
 for i in $admins; do
-  fin add-admin $i@ucdavis.edu
+  fin acl add-admin $i@ucdavis.edu
 done
 ```
 
