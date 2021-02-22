@@ -12,16 +12,16 @@ services:
     image: ucdlib/fin-ucd-lib-server-impl:{{APP_TAG}}
     volumes:
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
-      - ./repositories/fin-server/server/controllers:/app/controllers
-      - ./repositories/fin-server/server/lib:/app/lib
-      - ./repositories/fin-server/server/index.js:/app/index.js
-      - ./repositories/fin-server/server/assets:/app/assets
-      - ./repositories/fin-server/server/models:/app/models
-      - ./repositories/fin-server/node-utils/lib:/fin-node-utils/lib
-      - ./repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
-      - ./repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
-      - ./repositories/fin-ucd-lib-server/server/transforms:/etc/fin/transforms
-      - ./repositories/fin-ucd-lib-server/server/core-services.js:/etc/fin/core-services.js
+      - ../repositories/fin-server/server/controllers:/app/controllers
+      - ../repositories/fin-server/server/lib:/app/lib
+      - ../repositories/fin-server/server/index.js:/app/index.js
+      - ../repositories/fin-server/server/assets:/app/assets
+      - ../repositories/fin-server/server/models:/app/models
+      - ../repositories/fin-server/node-utils/lib:/fin-node-utils/lib
+      - ../repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
+      - ../repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
+      - ../repositories/fin-ucd-lib-server/server/transforms:/etc/fin/transforms
+      - ../repositories/fin-ucd-lib-server/server/core-services.js:/etc/fin/core-services.js
       - ../ucd-lib-server-impl/app-services.js:/etc/fin/app-services.js
     ports:
       - ${HOST_PORT:-3000}:3001
@@ -59,10 +59,10 @@ services:
     image: ucdlib/fin-trusted-proxy:{{CORE_SERVER_REPO_TAG}}
     volumes:
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
-      - ./repositories/fin-server/trusted-proxy/index.js:/service/index.js
-      - ./repositories/fin-server/node-utils/lib:/fin-node-utils/lib
-      - ./repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
-      - ./repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
+      - ../repositories/fin-server/trusted-proxy/index.js:/service/index.js
+      - ../repositories/fin-server/node-utils/lib:/fin-node-utils/lib
+      - ../repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
+      - ../repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
     env_file:
       - .env
     depends_on:
@@ -86,15 +86,15 @@ services:
     image: ucdlib/fin-ucd-lib-client:{{UCD_LIB_SERVER_REPO_TAG}}
     volumes:
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
-      - ./repositories/fin-ucd-lib-server/services/ucd-lib-client/index.js:/service/index.js
-      - ./repositories/fin-ucd-lib-server/services/ucd-lib-client/config.js:/service/config.js
-      - ./repositories/fin-ucd-lib-server/services/ucd-lib-client/client:/service/client
-      - ./repositories/fin-ucd-lib-server/services/ucd-lib-client/controllers:/service/controllers
-      - ./repositories/fin-ucd-lib-server/services/ucd-lib-client/lib:/service/lib
-      - ./repositories/fin-ucd-lib-server/services/ucd-lib-client/models:/service/models
-      - ./repositories/fin-server/node-utils/lib:/fin-node-utils/lib
-      - ./repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
-      - ./repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
+      - ../repositories/fin-ucd-lib-server/services/ucd-lib-client/index.js:/service/index.js
+      - ../repositories/fin-ucd-lib-server/services/ucd-lib-client/config.js:/service/config.js
+      - ../repositories/fin-ucd-lib-server/services/ucd-lib-client/client:/service/client
+      - ../repositories/fin-ucd-lib-server/services/ucd-lib-client/controllers:/service/controllers
+      - ../repositories/fin-ucd-lib-server/services/ucd-lib-client/lib:/service/lib
+      - ../repositories/fin-ucd-lib-server/services/ucd-lib-client/models:/service/models
+      - ../repositories/fin-server/node-utils/lib:/fin-node-utils/lib
+      - ../repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
+      - ../repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
     env_file:
       - .env
     depends_on:
@@ -108,13 +108,13 @@ services:
     image: ucdlib/fin-essync:{{UCD_LIB_SERVER_REPO_TAG}}
     volumes:
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
-      - ./repositories/fin-ucd-lib-server/services/essync/lib:/service/lib
-      - ./repositories/fin-ucd-lib-server/services/essync/schemas:/service/schemas
-      - ./repositories/fin-ucd-lib-server/services/essync/index.js:/service/index.js
-      - ./repositories/fin-ucd-lib-server/services/essync/reindex.js:/service/reindex.js
-      - ./repositories/fin-server/node-utils/lib:/fin-node-utils/lib
-      - ./repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
-      - ./repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
+      - ../repositories/fin-ucd-lib-server/services/essync/lib:/service/lib
+      - ../repositories/fin-ucd-lib-server/services/essync/schemas:/service/schemas
+      - ../repositories/fin-ucd-lib-server/services/essync/index.js:/service/index.js
+      - ../repositories/fin-ucd-lib-server/services/essync/reindex.js:/service/reindex.js
+      - ../repositories/fin-server/node-utils/lib:/fin-node-utils/lib
+      - ../repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
+      - ../repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
     env_file:
       - .env
     depends_on:
@@ -147,8 +147,8 @@ services:
       - .env
     volumes:
       - loris-cache:/var/cache/loris
-      - ./repositories/fin-service-loris/loris2.conf:/opt/loris/etc/loris2.conf
-      - ./repositories/fin-service-loris/start.py:/opt/loris/loris/start.py
+      - ../repositories/fin-service-loris/loris2.conf:/opt/loris/etc/loris2.conf
+      - ../repositories/fin-service-loris/start.py:/opt/loris/loris/start.py
 
   ###
   # Tesseract OCR Services
@@ -157,10 +157,10 @@ services:
     image: ucdlib/fin-tesseract:{{TESSERACT_SERVICE_REPO_TAG}}
     volumes:
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
-      - ./repositories/fin-service-tesseract/index.js:/service/index.js
-      - ./repositories/fin-server/node-utils/lib:/fin-node-utils/lib
-      - ./repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
-      - ./repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
+      - ../repositories/fin-service-tesseract/index.js:/service/index.js
+      - ../repositories/fin-server/node-utils/lib:/fin-node-utils/lib
+      - ../repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
+      - ../repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
     env_file:
       - .env
     depends_on:
@@ -174,11 +174,11 @@ services:
     image: ucdlib/fin-cas:{{CAS_SERVICE_REPO_TAG}}
     volumes:
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
-      - ./repositories/fin-service-cas/controller.js:/service/controller.js
-      - ./repositories/fin-service-cas/index.js:/service/index.js
-      - ./repositories/fin-server/node-utils/lib:/fin-node-utils/lib
-      - ./repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
-      - ./repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
+      - ../repositories/fin-service-cas/controller.js:/service/controller.js
+      - ../repositories/fin-service-cas/index.js:/service/index.js
+      - ../repositories/fin-server/node-utils/lib:/fin-node-utils/lib
+      - ../repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
+      - ../repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
     env_file:
       - .env
     depends_on:
