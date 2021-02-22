@@ -1,5 +1,23 @@
 steps:
 
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: ['rsync', 'gs://${_CONFIG_BUCKET}/${_CONFIG_PROJECT}', '/config']
+    volumes:
+    - name: 'config'
+      path: '/config'
+
+  - name: 'gcr.io/$PROJECT_ID/ci-buildnum'
+    args: ['/config/buildnum', '/config/.buildenv']
+    volumes:
+    - name: 'config'
+      path: '/config'
+
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: ['cp', '/config/buildnum', 'gs://${_CONFIG_BUCKET}/${_CONFIG_PROJECT}/buildnum']
+    volumes:
+    - name: 'config'
+      path: '/config'
+
   - name: gcr.io/cloud-builders/gcloud
     entrypoint: 'bash'
     args: [ '-c', 'gcloud secrets versions access latest --secret=libosdev-dockerhub-secret > pass.txt' ]
@@ -15,17 +33,34 @@ steps:
   - name: "gcr.io/cloud-builders/docker"
     entrypoint: "bash"
     args: ["-c", "docker login --username=libosdev --password-stdin < pass.txt"]
-  
+
   - name: gcr.io/cloud-builders/git
     entrypoint: "bash"
-    args: ["-c", "./gcloud/pull.sh"]
+    args: ["-c", "./cmds/clone.sh"]
 
   - name: gcr.io/cloud-builders/docker
     entrypoint: "bash"
-    args: ["-c", "./gcloud/build.sh"]
+    args: ["-c", "./cmds/pull.sh"]
 
   - name: gcr.io/cloud-builders/docker
     entrypoint: "bash"
-    args: ["-c", "./gcloud/push.sh"]
+    args: ["-c", "./cmds/build.sh"]
+    env: 
+      - 'GCLOUD_BUILD=true'
+    volumes:
+    - name: 'config'
+      path: '/config'
+
+  - name: gcr.io/cloud-builders/docker
+    entrypoint: "bash"
+    args: ["-c", "./cmds/push.sh"]
+    volumes:
+    - name: 'config'
+      path: '/config'
+
+substitutions:
+  _CONFIG_BUCKET: ci-build-config
+  _CONFIG_PROJECT: dams
+
 
 timeout: 1800s

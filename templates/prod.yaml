@@ -9,7 +9,7 @@ services:
   # Font End NodeJS Application Server
   ###
   server:
-    image: ucdlib/fin-ucd-lib-server-impl:{{APP_VERSION}}
+    image: ucdlib/fin-ucd-lib-server-impl:{{APP_TAG}}
     volumes:
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
     ports:
