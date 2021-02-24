@@ -63,6 +63,18 @@ services:
       - fcrepo
 
   ###
+  # UC DAMS Client API
+  ###
+  api:
+    image: ucdlib/fin-ucd-lib-api:v2.0-sandbox
+    volumes:
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
+    env_file:
+      - .env
+    depends_on:
+      - elasticsearch
+
+  ###
   # UC DAMS Client UI
   ###
   ucd-lib-client:

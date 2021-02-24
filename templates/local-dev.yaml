@@ -80,6 +80,26 @@ services:
       - fcrepo
 
   ###
+  # UC DAMS Client API
+  ###
+  api:
+    image: ucdlib/fin-ucd-lib-api:{{UCD_LIB_SERVER_REPO_TAG}}
+    volumes:
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
+      - ../repositories/fin-ucd-lib-server/services/api/index.js:/service/index.js
+      - ../repositories/fin-ucd-lib-server/services/api/controllers:/service/controllers
+      - ../repositories/fin-ucd-lib-server/services/api/lib:/service/lib
+      - ../repositories/fin-ucd-lib-server/services/api/models:/service/models
+      - ../repositories/fin-server/node-utils/lib:/fin-node-utils/lib
+      - ../repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
+      - ../repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
+    env_file:
+      - .env
+    depends_on:
+      - elasticsearch
+  # command: bash -c 'tail -f /dev/null'
+
+  ###
   # UC DAMS Client UI
   ###
   ucd-lib-client:
