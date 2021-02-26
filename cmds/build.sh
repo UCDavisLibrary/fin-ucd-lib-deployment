@@ -27,6 +27,8 @@ if [[ ! -z $LOCAL_BUILD ]]; then
 fi
 
 
+CORE_SERVER_REPO_HASH=$(git -C $REPOSITORY_DIR/$CORE_SERVER_REPO_NAME log -1 --pretty=%h)
+
 # Core Server - fcrepo
 docker build \
   --build-arg CORE_SERVER_REPO_TAG=${CORE_SERVER_REPO_TAG} \
@@ -121,6 +123,11 @@ docker build \
   --build-arg CORE_SERVER_REPO_TAG=${CORE_SERVER_REPO_TAG} \
   --build-arg UCD_LIB_SERVER_REPO_TAG=${UCD_LIB_SERVER_REPO_TAG} \
   --build-arg UCD_LIB_SERVER_REPO_HASH=${UCD_LIB_SERVER_REPO_HASH} \
+  --build-arg CORE_SERVER_REPO_TAG=${CORE_SERVER_REPO_TAG} \
+  --build-arg CORE_SERVER_REPO_HASH=${CORE_SERVER_REPO_HASH} \
+  --build-arg BUILD_NUM=${BUILD_NUM} \
+  --build-arg BUILD_TIME=${BUILD_TIME} \
+  --build-arg APP_VERSION=${APP_VERSION} \
   --build-arg NODEJS_BASE=${NODEJS_BASE} \
   -t $UCD_LIB_CLIENT_IMAGE_NAME:$UCD_LIB_SERVER_REPO_TAG \
   --cache-from $UCD_LIB_CLIENT_IMAGE_NAME:$DOCKER_CACHE_TAG \
