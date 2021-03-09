@@ -86,15 +86,6 @@ docker build \
   --cache-from $UCD_LIB_SERVER_IMAGE_NAME:$DOCKER_CACHE_TAG \
   $REPOSITORY_DIR/$UCD_LIB_SERVER_REPO_NAME/server
 
-# UCD Library Server - essync
-docker build \
-  --build-arg CORE_SERVER_REPO_TAG=${CORE_SERVER_REPO_TAG} \
-  --build-arg UCD_LIB_SERVER_REPO_TAG=${UCD_LIB_SERVER_REPO_TAG} \
-  --build-arg UCD_LIB_SERVER_REPO_HASH=${UCD_LIB_SERVER_REPO_HASH} \
-  -t $ESSYNC_IMAGE_NAME:$UCD_LIB_SERVER_REPO_TAG \
-  --cache-from $ESSYNC_IMAGE_NAME:$DOCKER_CACHE_TAG \
-  $REPOSITORY_DIR/$UCD_LIB_SERVER_REPO_NAME/services/essync
-
 # UCD Library Server - node utils
 docker build \
   --build-arg CORE_SERVER_REPO_TAG=${CORE_SERVER_REPO_TAG} \
@@ -106,7 +97,15 @@ docker build \
 
 NODEJS_BASE=$UCD_LIB_NODE_UTILS_IMAGE_NAME:$UCD_LIB_SERVER_REPO_TAG
 
-echo "$NODEJS_BASE"
+# UCD Library Server - essync
+docker build \
+  --build-arg CORE_SERVER_REPO_TAG=${CORE_SERVER_REPO_TAG} \
+  --build-arg NODEJS_BASE=${NODEJS_BASE} \
+  --build-arg UCD_LIB_SERVER_REPO_TAG=${UCD_LIB_SERVER_REPO_TAG} \
+  --build-arg UCD_LIB_SERVER_REPO_HASH=${UCD_LIB_SERVER_REPO_HASH} \
+  -t $ESSYNC_IMAGE_NAME:$UCD_LIB_SERVER_REPO_TAG \
+  --cache-from $ESSYNC_IMAGE_NAME:$DOCKER_CACHE_TAG \
+  $REPOSITORY_DIR/$UCD_LIB_SERVER_REPO_NAME/services/essync
 
 # UCD Library Server - api
 docker build \
