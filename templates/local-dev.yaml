@@ -89,7 +89,9 @@ services:
       - ../repositories/fin-ucd-lib-server/services/api/index.js:/service/index.js
       - ../repositories/fin-ucd-lib-server/services/api/controllers:/service/controllers
       - ../repositories/fin-ucd-lib-server/services/api/lib:/service/lib
-      - ../repositories/fin-ucd-lib-server/services/api/models:/service/models
+      - ../repositories/fin-ucd-lib-server/node-utils/lib:/fin-ucd-lib-node-utils/lib
+      - ../repositories/fin-ucd-lib-server/node-utils/models:/fin-ucd-lib-node-utils/models
+      - ../repositories/fin-ucd-lib-server/node-utils/index.js:/fin-ucd-lib-node-utils/index.js
       - ../repositories/fin-server/node-utils/lib:/fin-node-utils/lib
       - ../repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
       - ../repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
