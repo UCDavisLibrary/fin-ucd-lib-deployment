@@ -12,8 +12,25 @@ steps:
     - name: 'config'
       path: '/config'
 
+  - name: 'gcr.io/$PROJECT_ID/ci-build-deployment-logger'
+    args: ['/config']
+    env: 
+    - 'REPO_NAME=$REPO_NAME'
+    - 'BRANCH_NAME=$BRANCH_NAME'
+    - '_UCD_LIB_INITIATOR=$_UCD_LIB_INITIATOR'
+    - 'BUILD_ID=$BUILD_ID'
+    volumes:
+    - name: 'config'
+      path: '/config'
+
   - name: 'gcr.io/cloud-builders/gsutil'
     args: ['cp', '/config/buildnum', 'gs://${_CONFIG_BUCKET}/${_CONFIG_PROJECT}/buildnum']
+    volumes:
+    - name: 'config'
+      path: '/config'
+
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: ['cp', '-r', '/config/${BUILD_ID}', 'gs://${_CONFIG_BUCKET}/${_CONFIG_PROJECT}/${BUILD_ID}']
     volumes:
     - name: 'config'
       path: '/config'
