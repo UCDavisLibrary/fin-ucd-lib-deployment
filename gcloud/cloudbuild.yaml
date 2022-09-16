@@ -24,6 +24,8 @@ steps:
     - '_GITHUB_PR_USER=$_GITHUB_PR_USER'
     - '_GITHUB_PR_MERGED_BY=$_GITHUB_PR_MERGED_BY'
     - 'BUILD_ID=$BUILD_ID'
+    - 'SHORT_SHA=$SHORT_SHA'
+    - 'TAG_NAME=$TAG_NAME'
     volumes:
     - name: 'config'
       path: '/config'
@@ -39,22 +41,6 @@ steps:
     volumes:
     - name: 'config'
       path: '/config'
-
-  - name: gcr.io/cloud-builders/gcloud
-    entrypoint: 'bash'
-    args: [ '-c', 'gcloud secrets versions access latest --secret=libosdev-dockerhub-secret > pass.txt' ]
-    # this is a hack to get the BRANCH_NAME and SHORT_SHA in the build metadata even when
-    # submitted from via ./gcloud/push.sh.  All --substitutions variables have to exist in the
-    # yaml file.  Even when you are substiting special variables like BRANCH_NAME and SHORT_SHA (lame).
-    env: 
-      - 'REPO_NAME=$REPO_NAME'
-      - 'BRANCH_NAME=$BRANCH_NAME'
-      - 'SHORT_SHA=$SHORT_SHA'
-      - 'TAG_NAME=$TAG_NAME'
-  
-  - name: "gcr.io/cloud-builders/docker"
-    entrypoint: "bash"
-    args: ["-c", "docker login --username=libosdev --password-stdin < pass.txt"]
 
   - name: gcr.io/cloud-builders/git
     entrypoint: "bash"
