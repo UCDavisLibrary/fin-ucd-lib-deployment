@@ -31,7 +31,8 @@ docker build \
   --build-arg FIN_SERVER_REPO_HASH=${FIN_SERVER_REPO_HASH} \
   -t $SERVER_IMAGE_NAME:$APP_VERSION \
   --cache-from $SERVER_IMAGE_NAME:$DOCKER_CACHE_TAG \
-  $REPOSITORY_DIR/$FIN_SERVER_REPO_NAME/services/fin
+  -f $REPOSITORY_DIR/$FIN_SERVER_REPO_NAME/services/fin/Dockerfile \
+  $REPOSITORY_DIR/$FIN_SERVER_REPO_NAME
 
 # UCD Library Server - elastic search
 docker build \

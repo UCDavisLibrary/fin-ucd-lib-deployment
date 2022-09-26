@@ -8,21 +8,20 @@ services:
   ###
   # Font End NodeJS Application Server
   ###
-  server:
-    image: gcr.io/ucdlib-pubreg/fin-server:${APP_VERSION}
+  gateway:
+    image: {{SERVER_IMAGE_NAME}}:{{APP_VERSION}}
     volumes:
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
-      - ../repositories/fin-server/server/controllers:/app/controllers
-      - ../repositories/fin-server/server/lib:/app/lib
-      - ../repositories/fin-server/server/index.js:/app/index.js
-      - ../repositories/fin-server/server/assets:/app/assets
-      - ../repositories/fin-server/server/models:/app/models
-      - ../repositories/fin-server/node-utils/lib:/fin-node-utils/lib
-      - ../repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
-      - ../repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
-      - ../repositories/fin-ucd-lib-server/server/transforms:/etc/fin/transforms
-      - ../repositories/fin-ucd-lib-server/server/core-services.js:/etc/fin/core-services.js
-      - ../ucd-lib-server-impl/app-services.js:/etc/fin/app-services.js
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/api:/fin/services/api
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/cas:/fin/services/cas
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/essync:/fin/services/essync
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/gateway:/fin/services/gateway
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/gateway-ucd:/fin/services/gateway-ucd
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/node-utils:/fin/services/node-utils
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/trusted-proxy:/fin/services/trusted-proxy
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/ucd-lib-client:/fin/services/ucd-lib-client
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/fin-api/index.js:/fin/api/index.js
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/fin-api/lib:/fin/api/lib
     ports:
       - ${HOST_PORT:-3000}:3001
     env_file:
@@ -31,13 +30,16 @@ services:
       - fcrepo
       - redis
       - elasticsearch
-    # command: bash -c 'tail -f /dev/null'
+    # command: npm run gateway
+    command: bash -c 'tail -f /dev/null'
 
   ###
   # Fedora Repository
   ###
   fcrepo:
-    image: gcr.io/ucdlib-pubreg/fin-fcrepo:${APP_VERSION}
+    image: {{FCREPO_IMAGE_NAME}}:{{APP_VERSION}}
+    ports:
+      - 8080:8080
     volumes:
       - fedora-data:/var/lib/jetty/fedora-data
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
@@ -48,7 +50,7 @@ services:
   # Fedora Postgres Service
   ###
   postgres:
-    image: gcr.io/ucdlib-pubreg/fin-postgres:${APP_VERSION}
+    image: {{POSTGRES_IMAGE_NAME}}:{{APP_VERSION}}
     volumes:
       - pg-data:/var/lib/postgresql/data
 
@@ -56,17 +58,24 @@ services:
   # Trusted Proxy for Services
   ###
   trustedproxy:
-    image: gcr.io/ucdlib-pubreg/fin-server:${APP_VERSION}
+    image: {{SERVER_IMAGE_NAME}}:{{APP_VERSION}}
     volumes:
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
-      - ../repositories/fin-server/trusted-proxy/index.js:/service/index.js
-      - ../repositories/fin-server/node-utils/lib:/fin-node-utils/lib
-      - ../repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
-      - ../repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/api:/fin/services/api
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/cas:/fin/services/cas
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/essync:/fin/services/essync
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/gateway:/fin/services/gateway
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/gateway-ucd:/fin/services/gateway-ucd
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/node-utils:/fin/services/node-utils
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/trusted-proxy:/fin/services/trusted-proxy
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/ucd-lib-client:/fin/services/ucd-lib-client
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/fin-api/index.js:/fin/api/index.js
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/fin-api/lib:/fin/api/lib
     env_file:
       - .env
     depends_on:
       - fcrepo
+    command: npm run trusted-proxy
     # command: bash -c 'tail -f /dev/null'
 
   ###
@@ -83,71 +92,79 @@ services:
   # UC DAMS Client API
   ###
   api:
-    image: gcr.io/ucdlib-pubreg/fin-server:${APP_VERSION}
+    image: {{SERVER_IMAGE_NAME}}:{{APP_VERSION}}
     volumes:
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
-      - ../repositories/fin-ucd-lib-server/services/api/index.js:/service/index.js
-      - ../repositories/fin-ucd-lib-server/services/api/controllers:/service/controllers
-      - ../repositories/fin-ucd-lib-server/services/api/lib:/service/lib
-      - ../repositories/fin-ucd-lib-server/node-utils/lib:/fin-ucd-lib-node-utils/lib
-      - ../repositories/fin-ucd-lib-server/node-utils/models:/fin-ucd-lib-node-utils/models
-      - ../repositories/fin-ucd-lib-server/node-utils/index.js:/fin-ucd-lib-node-utils/index.js
-      - ../repositories/fin-server/node-utils/lib:/fin-node-utils/lib
-      - ../repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
-      - ../repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/api:/fin/services/api
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/cas:/fin/services/cas
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/essync:/fin/services/essync
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/gateway:/fin/services/gateway
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/gateway-ucd:/fin/services/gateway-ucd
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/node-utils:/fin/services/node-utils
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/trusted-proxy:/fin/services/trusted-proxy
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/ucd-lib-client:/fin/services/ucd-lib-client
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/fin-api/index.js:/fin/api/index.js
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/fin-api/lib:/fin/api/lib
     env_file:
       - .env
     depends_on:
       - elasticsearch
+    command: npm run api
   # command: bash -c 'tail -f /dev/null'
 
   ###
   # UC DAMS Client UI
   ###
   ucd-lib-client:
-    image: gcr.io/ucdlib-pubreg/fin-server:${APP_VERSION}
+    image: {{SERVER_IMAGE_NAME}}:{{APP_VERSION}}
     volumes:
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
-      - ../repositories/fin-ucd-lib-server/services/ucd-lib-client/index.js:/service/index.js
-      - ../repositories/fin-ucd-lib-server/services/ucd-lib-client/config.js:/service/config.js
-      - ../repositories/fin-ucd-lib-server/services/ucd-lib-client/client:/service/client
-      - ../repositories/fin-ucd-lib-server/services/ucd-lib-client/controllers:/service/controllers
-      - ../repositories/fin-ucd-lib-server/services/ucd-lib-client/lib:/service/lib
-      - ../repositories/fin-ucd-lib-server/services/ucd-lib-client/models:/service/models
-      - ../repositories/fin-server/node-utils/lib:/fin-node-utils/lib
-      - ../repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
-      - ../repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/api:/fin/services/api
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/cas:/fin/services/cas
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/essync:/fin/services/essync
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/gateway:/fin/services/gateway
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/gateway-ucd:/fin/services/gateway-ucd
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/node-utils:/fin/services/node-utils
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/trusted-proxy:/fin/services/trusted-proxy
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/ucd-lib-client:/fin/services/ucd-lib-client
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/fin-api/index.js:/fin/api/index.js
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/fin-api/lib:/fin/api/lib
     env_file:
       - .env
     depends_on:
       - elasticsearch
-    # command: bash -c 'tail -f /dev/null'
+    # command: npm run ucd-lib-client
+    command: bash -c 'tail -f /dev/null'
 
   ###
   # ES Indexer
   ###
   essync:
-    image: gcr.io/ucdlib-pubreg/fin-server:${APP_VERSION}
+    image: {{SERVER_IMAGE_NAME}}:{{APP_VERSION}}
     volumes:
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
-      - ../repositories/fin-ucd-lib-server/services/essync/lib:/service/lib
-      - ../repositories/fin-ucd-lib-server/services/essync/schemas:/service/schemas
-      - ../repositories/fin-ucd-lib-server/services/essync/index.js:/service/index.js
-      - ../repositories/fin-ucd-lib-server/services/essync/reindex.js:/service/reindex.js
-      - ../repositories/fin-server/node-utils/lib:/fin-node-utils/lib
-      - ../repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
-      - ../repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/api:/fin/services/api
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/cas:/fin/services/cas
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/essync:/fin/services/essync
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/gateway:/fin/services/gateway
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/gateway-ucd:/fin/services/gateway-ucd
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/node-utils:/fin/services/node-utils
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/trusted-proxy:/fin/services/trusted-proxy
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/ucd-lib-client:/fin/services/ucd-lib-client
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/fin-api/index.js:/fin/api/index.js
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/fin-api/lib:/fin/api/lib
     env_file:
       - .env
     depends_on:
-      - server
+      - gateway
+    command: npm run essync
     # command: bash -c 'tail -f /dev/null'
 
   ###
   # Search
   ###
   elasticsearch:
-    image: gcr.io/ucdlib-pubreg/fin-elastic-search:${APP_VERSION}
+    image: {{ELASTIC_SEARCH_IMAGE_NAME}}:{{APP_VERSION}}
     ulimits:
       memlock:
         soft: -1
@@ -162,49 +179,55 @@ services:
   # IIIF Service
   ###
   loris:
-    image: gcr.io/ucdlib-pubreg/fin-loris:${APP_VERSION}
+    image: {{LORIS_IMAGE_NAME}}:{{APP_VERSION}}
     depends_on:
       - fcrepo
     env_file:
       - .env
     volumes:
       - loris-cache:/var/cache/loris
-      - ../repositories/fin-service-loris/loris2.conf:/opt/loris/etc/loris2.conf
-      - ../repositories/fin-service-loris/start.py:/opt/loris/loris/start.py
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/loris/loris2.conf:/opt/loris/etc/loris2.conf
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/loris/start.py:/opt/loris/loris/start.py
 
   ###
   # Tesseract OCR Services
   ###
   tesseract:
-    image: gcr.io/ucdlib-pubreg/fin-server:${APP_VERSION}
+    image: {{TESSERACT_IMAGE_NAME}}:{{APP_VERSION}}
     volumes:
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
-      - ../repositories/fin-service-tesseract/index.js:/service/index.js
-      - ../repositories/fin-server/node-utils/lib:/fin-node-utils/lib
-      - ../repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
-      - ../repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/tesseract/index.js:/service/index.js
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/node-utils/lib:/fin-node-utils/lib
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/node-utils/config.js:/fin-node-utils/config.js
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/node-utils/index.js:/fin-node-utils/index.js
     env_file:
       - .env
     depends_on:
-      - server
+      - gateway
     # command: bash -c 'tail -f /dev/null'
 
   ###
   # CAS AuthenticationService
   ###
   cas:
-    image: gcr.io/ucdlib-pubreg/fin-cas:{{APP_TAG}}
+    image: {{SERVER_IMAGE_NAME}}:{{APP_VERSION}}
     volumes:
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
-      - ../repositories/fin-service-cas/controller.js:/service/controller.js
-      - ../repositories/fin-service-cas/index.js:/service/index.js
-      - ../repositories/fin-server/node-utils/lib:/fin-node-utils/lib
-      - ../repositories/fin-server/node-utils/config.js:/fin-node-utils/config.js
-      - ../repositories/fin-server/node-utils/index.js:/fin-node-utils/index.js
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/api:/fin/services/api
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/cas:/fin/services/cas
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/essync:/fin/services/essync
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/gateway:/fin/services/gateway
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/gateway-ucd:/fin/services/gateway-ucd
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/node-utils:/fin/services/node-utils
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/trusted-proxy:/fin/services/trusted-proxy
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/ucd-lib-client:/fin/services/ucd-lib-client
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/fin-api/index.js:/fin/api/index.js
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/fin-api/lib:/fin/api/lib
     env_file:
       - .env
     depends_on:
-      - server
+      - gateway
+    command: npm run cas
     # command: bash -c 'tail -f /dev/null'
 
 
