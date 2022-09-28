@@ -40,6 +40,9 @@ services:
     image: {{FCREPO_IMAGE_NAME}}:{{APP_VERSION}}
     ports:
       - 8080:8080
+    # Example for change logging.  Note, don't forget to still include the fcrepo.properties file location!
+    # environment:
+    #  - CATALINA_OPTS=-Dfcrepo.log.auth=DEBUG -Dfcrepo.config.file=/etc/fin/fcrepo.properties
     volumes:
       - fedora-data:/var/lib/jetty/fedora-data
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
