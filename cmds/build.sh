@@ -34,6 +34,12 @@ docker build \
   -f $REPOSITORY_DIR/$FIN_SERVER_REPO_NAME/services/fin/Dockerfile \
   $REPOSITORY_DIR/$FIN_SERVER_REPO_NAME
 
+# Init services
+docker build \
+  -t $INIT_IMAGE_NAME:$APP_VERSION \
+  --cache-from $INIT_IMAGE_NAME:$DOCKER_CACHE_TAG \
+  $REPOSITORY_DIR/$FIN_SERVER_REPO_NAME/services/init
+
 # UCD Library Server - elastic search
 docker build \
   --build-arg FIN_SERVER_REPO_TAG=${FIN_SERVER_REPO_TAG} \
