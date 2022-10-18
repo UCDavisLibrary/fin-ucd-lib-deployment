@@ -6,7 +6,7 @@ version: '3'
 services:
 
   ###
-  # Font End NodeJS Application Server
+  # Front End NodeJS Application Server
   ###
   gateway:
     image: {{SERVER_IMAGE_NAME}}:{{APP_VERSION}}
@@ -32,8 +32,8 @@ services:
       - fcrepo
       - redis
       - elasticsearch
-    # command: npm run gateway
-    command: bash -c 'tail -f /dev/null'
+    command: npm run gateway
+    # command: bash -c 'tail -f /dev/null'
 
   ###
   # Fedora Repository
@@ -51,7 +51,7 @@ services:
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fcrepo/activemq.xml:/usr/local/tomcat/webapps/fcrepo/WEB-INF/classes/config/activemq.xml
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fcrepo/fcrepo.properties:/etc/fin/fcrepo.properties
-      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fcrepo/root-authorizativvon.ttl:/etc/fin/root-authorization.ttl
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fcrepo/root-authorization.ttl:/etc/fin/root-authorization.ttl
     env_file:
       - .env
 
@@ -151,8 +151,8 @@ services:
       - .env
     depends_on:
       - elasticsearch
-    # command: npm run ucd-lib-client
-    command: bash -c 'tail -f /dev/null'
+    command: npm run ucd-lib-client
+    # command: bash -c 'tail -f /dev/null'
 
   ###
   # ES Indexer
@@ -196,7 +196,7 @@ services:
     # command: bash -c 'tail -f /dev/null'
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.16.3
+    image: docker.elastic.co/kibana/kibana:8.4.3
     ports:
       - 5601:5601
     env_file:
