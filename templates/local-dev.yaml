@@ -16,7 +16,9 @@ services:
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/cas:/fin/services/cas
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/essync:/fin/services/essync
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/gateway:/fin/services/gateway
-      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/gateway-ucd:/fin/services/gateway-ucd
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/gateway-ucd/transforms:/etc/fin/transforms
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/gateway-ucd/core-services.js:/etc/fin/core-services.js
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/gateway-ucd/app-services.js:/etc/fin/app-services.js
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/node-utils:/fin/services/node-utils
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/trusted-proxy:/fin/services/trusted-proxy
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/ucd-lib-client:/fin/services/ucd-lib-client
@@ -185,11 +187,27 @@ services:
       memlock:
         soft: -1
         hard: -1
+    env_file:
+      - .env
     volumes:
       - es-data:/usr/share/elasticsearch/data
     depends_on:
       - fcrepo
     # command: bash -c 'tail -f /dev/null'
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.16.3
+    ports:
+      - 5601:5601
+    env_file:
+      - .env
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - xpack.security.enabled=false
+      - telemetry.enabled=false
+    depends_on:
+      - elasticsearch
 
   ###
   # IIIF Service
