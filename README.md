@@ -85,84 +85,75 @@ The ```fin-ucd-lib-server-impl``` will contain environment variables containing 
 
 # Developing on Your Local Machine
 
-## Local Development Overview
+When running applications locally, we follow a few best practices to make development easier/smoother. Read the [Local Development](https://docs.google.com/document/d/1_apSpfNdpbXeIE-eGSJ3EpZr-S1SE3L0l0TBirZWrds/edit#heading=h.r0k0nn238ncf) section in the UC Davis Library developers guide before proceeding.
 
-Working on code within docker containers can provide challanges.  The following setup is not required; you can build, stop and start fresh containers as you develop, though this process can be cumbersome and slow.  We will use the practice of mounting local filesystem volumes into containers so code changes are applied in real time.  Additionaly, if you server is being worked on and restarts are required for those changes to show, the following pattern is preferred. 
+## Cloning Code and Building Images
 
-In the `fin-local-dev/docker-compose.yaml` file, set the services command to:
+First, make a directory for this project on your local disk, enter it, and clone this repository. Checkout the version/branch/tag you want to work from.
 
-```yaml
-command: bash -c 'tail -f /dev/null'
-```
+Next, retrieve all the additional repositories needed to run this application. In the project directory (not this repo), clone all repositories listed in the `ALL_GIT_REPOSITORIES` variable in `config.sh`. Make sure that each repository is on the branch you want. It is up to you the developer to ensure your development repositories are at the same branch/tag as this deployment. Next, in this repository, link these repositories with `./cmds/init-local-dev.sh`.
 
-This will start the container up without running the default process.  Next start the cluster
-
+Generate a docker compose file for local development by running:
 ```bash
-cd fin-local-dev
-docker-compose up -d
+npm install -g @ucd-lib/cork-template
+./cmds/generate-deployment-files.sh
 ```
-
-Finally, open a tty connection running bash to the container and start the server from within the container
-
-```bash
-docker-compose exec ucd-lib-client bash
-node /server
-```
-
-No if you want to restart the server, you can simply type `Ctrl+C` to kill the server and then run `node /server` again without having to restart the entire container.
-
-## Local Development Setup
-
-First, clone this repository to your local disk and checkout the version/tag you want to work from.
-
-You can generate a new development docker-compose.yaml script via `./templates/generate.sh`.  This will create a new docker-compose.yaml in `/fin-local-dev`.  Note, git ignores this yaml file so you can make local changes that won't effect other developers, those these changes will be wiped each time your run `./templates/generate.sh`.
+This will create a new docker-compose.yaml in `/fin-local-dev`.  Note, git ignores this yaml file so you can make local changes that won't affect other developers, any changes will be wiped each time your run `./cmds/generate-deployment-files.sh`.
 
 You will need to create a `.env` file in the `/fin-local-dev` directory, here is a sample:
 
 ```.env
-JWT_SECRET=[your secret here]
+JWT_SECRET=librariesaregreat
 JWT_ISSUER=library.ucdavis.edu
 JWT_TTL=86400
 JWT_VERBOSE=false
 FIN_URL=http://localhost:3000
+CAS_URL=https://ssodev.ucdavis.edu/cas
 ```
 
-Now, create the repositories folder inside `fin-local-dev`
+Finally, create the `:local-dev` tagged images used by the `fin-local-dev/docker-compose.yaml` file with `./cmds/build-local-dev.sh`. You should never push these local-dev images to Docker Hub.
+
+## Client Dependencies and Build
+
+The client is a single page application that we want to update everytime a code change is made. From the fin-server repo run:
 
 ```bash
-mkdir fin-local-dev/repositories
+cd services/fin/ucd-lib-client/client/public/
+npm install
 ```
 
-Somewhere on disk checkout the all repositories required for this deployment for Fin.  As of this writing there are five, check `config.sh` for required repositories.  Make sure you check each out the correct branch for each repository.  Note, this part is not automated as we do not want to accidently remove any changes you may have made.  It is up to you the developer to ensure your development repositories are at the same branch/tag as this deployment.
-
-```
-git clone https://github.com/UCDavisLibrary/fin-server
-git clone https://github.com/UCDavisLibrary/fin-ucd-lib-server
-# ...
+Start the watch process with
+```bash
+cd services/fin
+npm run client-watch
 ```
 
-Then you want to create symbolic links to each repository from the `fin-local-dev/repositories` directory.
-
-```
-cd fin-local-dev/repositories
-ln -s ../../fin-server .
-ln -s ../../fin-ucd-lib-server .
-# ...
-```
-
-Finally, create the `:local-dev` tagged images used by the `fin-local-dev/docker-compose.yaml` file.
-
-```
-./fin-local-dev/build.sh
-```
-
-This build script uses Docker BUILDKIT which should make subsequent builds very fast.  You should never push these local-dev images to Docker Hub.
-
-## Run Local Development
+## Running Your Cluster
 
 After completing the local development setup, simply:
 
-```
+```bash
 cd fin-local-dev
 docker-compose up
+```
+
+## Hydrating The Application
+
+Now, we need some example data for our application, which requires the fin cli:
+
+From the fin-server repository, run
+```bash
+cd fin-api/
+npm install && npm link
+fin config set host http://localhost:8080
+```
+
+Next, from the project directory, download the data and import:
+
+```bash
+git clone https://github.com/UCDavisLibrary/fin-example-repository.git
+cd fin-example-repository
+git checkout <whatever you are working on>
+cd collection/ex1-pets
+FCREPO_DIRECT_ACCESS=true FCREPO_SUPERUSER=true fin io import ex1-pets .
 ```
