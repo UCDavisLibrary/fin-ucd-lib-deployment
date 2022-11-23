@@ -37,6 +37,7 @@ docker build \
 # Init services
 docker build \
   -t $INIT_IMAGE_NAME:$APP_VERSION \
+  --build-arg FIN_SERVER_IMAGE=${SERVER_IMAGE_NAME}:${APP_VERSION} \
   --cache-from $INIT_IMAGE_NAME:$DOCKER_CACHE_TAG \
   $REPOSITORY_DIR/$FIN_SERVER_REPO_NAME/services/init
 
