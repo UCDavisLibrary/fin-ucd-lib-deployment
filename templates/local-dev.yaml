@@ -67,6 +67,9 @@ services:
   ###
   init:
     image: {{INIT_IMAGE_NAME}}:{{APP_VERSION}}
+    volumes:
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/init:/etc/ucdlib-service-init
+
 
   ###
   # Trusted Proxy for Services
@@ -233,14 +236,14 @@ services:
     # command: bash -c 'tail -f /dev/null'
 
   ###
-  # CAS AuthenticationService
+  # OIDC AuthenticationService
   ###
-  cas:
+  oidc:
     image: {{SERVER_IMAGE_NAME}}:{{APP_VERSION}}
     volumes:
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/api:/fin/services/api
-      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/cas:/fin/services/cas
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/oidc:/fin/services/oidc
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/essync:/fin/services/essync
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/gateway:/fin/services/gateway
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/node-utils:/fin/services/node-utils
@@ -252,8 +255,27 @@ services:
       - .env
     depends_on:
       - gateway
-    command: npm run cas
     # command: bash -c 'tail -f /dev/null'
+    command: npm run oidc
+    
+  keycloak:
+    image: {{KEYCLOAK_IMAGE_NAME}}:{{APP_VERSION}}
+    environment:
+      KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: true
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres/postgres
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+      KC_HOSTNAME: localhost
+    ports:
+      - 8081:8080
+      - 8443:8443
+    depends_on:
+      - keycloak
+    command: ["start-dev --import-realm"]
 
 
 ###
