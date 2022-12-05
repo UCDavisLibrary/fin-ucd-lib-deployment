@@ -270,6 +270,8 @@ services:
       KC_DB_USERNAME: postgres
       KC_DB_PASSWORD: postgres
       KC_HOSTNAME: localhost
+    volumes:
+      - ../keycloak/dams-local-dev-realm.json:/opt/keycloak/data/import/dams-local-dev-realm.json
     ports:
       - 8081:8080
       - 8443:8443

@@ -22,3 +22,6 @@ cd ./repositories
 for repo in "${ALL_GIT_REPOSITORIES[@]}"; do
   ln -s ../../$repo .
 done
+
+cd $ROOT_DIR
+./update-local-dev-keycloak-realm.sh
