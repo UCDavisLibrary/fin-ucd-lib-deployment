@@ -11,7 +11,7 @@ services:
   gateway:
     image: {{SERVER_IMAGE_NAME}}:{{APP_VERSION}}
     volumes:
-      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-../service-account.json}:/etc/fin/service-account.json
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/api:/fin/services/api
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/cas:/fin/services/cas
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/essync:/fin/services/essync
@@ -45,7 +45,7 @@ services:
     #  - CATALINA_OPTS=-Dfcrepo.log.auth=DEBUG -Dfcrepo.config.file=/etc/fin/fcrepo.properties
     volumes:
       - fedora-data:/usr/local/tomcat/fcrepo-home/data
-      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-../service-account.json}:/etc/fin/service-account.json
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fcrepo/activemq.xml:/usr/local/tomcat/webapps/fcrepo/WEB-INF/classes/config/activemq.xml
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fcrepo/fcrepo.properties:/etc/fin/fcrepo.properties
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fcrepo/root-authorization.ttl:/etc/fin/root-authorization.ttl
@@ -77,7 +77,7 @@ services:
   trustedproxy:
     image: {{SERVER_IMAGE_NAME}}:{{APP_VERSION}}
     volumes:
-      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-../service-account.json}:/etc/fin/service-account.json
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/api:/fin/services/api
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/cas:/fin/services/cas
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/essync:/fin/services/essync
@@ -110,7 +110,7 @@ services:
   api:
     image: {{SERVER_IMAGE_NAME}}:{{APP_VERSION}}
     volumes:
-      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-../service-account.json}:/etc/fin/service-account.json
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/api:/fin/services/api
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/cas:/fin/services/cas
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/essync:/fin/services/essync
@@ -127,13 +127,26 @@ services:
     command: npm run api
   # command: bash -c 'tail -f /dev/null'
 
+  app-data:
+    image: {{SERVER_IMAGE_NAME}}:{{APP_VERSION}}
+    volumes:
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-../service-account.json}:/etc/fin/service-account.json
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/app-data:/fin/services/app-data
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/node-utils:/fin/services/node-utils
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/fin-api/index.js:/fin/api/index.js
+      - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/fin-api/lib:/fin/api/lib
+    env_file:
+      - .env
+    command: npm run app-data
+    # command: bash -c 'tail -f /dev/null'
+
   ###
   # UC DAMS Client UI
   ###
   ucd-lib-client:
     image: {{SERVER_IMAGE_NAME}}:{{APP_VERSION}}
     volumes:
-      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-../service-account.json}:/etc/fin/service-account.json
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/api:/fin/services/api
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/cas:/fin/services/cas
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/essync:/fin/services/essync
@@ -156,7 +169,7 @@ services:
   essync:
     image: {{SERVER_IMAGE_NAME}}:{{APP_VERSION}}
     volumes:
-      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-../service-account.json}:/etc/fin/service-account.json
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/api:/fin/services/api
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/cas:/fin/services/cas
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/essync:/fin/services/essync
@@ -224,7 +237,7 @@ services:
   tesseract:
     image: {{TESSERACT_IMAGE_NAME}}:{{APP_VERSION}}
     volumes:
-      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-../service-account.json}:/etc/fin/service-account.json
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/tesseract/index.js:/service/index.js
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/node-utils/lib:/fin-node-utils/lib
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/node-utils/config.js:/fin-node-utils/config.js
@@ -241,7 +254,7 @@ services:
   oidc:
     image: {{SERVER_IMAGE_NAME}}:{{APP_VERSION}}
     volumes:
-      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
+      - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-../service-account.json}:/etc/fin/service-account.json
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/api:/fin/services/api
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/oidc:/fin/services/oidc
       - ../{{REPOSITORY_DIR}}/{{FIN_SERVER_REPO_NAME}}/services/fin/essync:/fin/services/essync
@@ -275,8 +288,6 @@ services:
     ports:
       - 8081:8080
       - 8443:8443
-    depends_on:
-      - keycloak
     command: ["start-dev --import-realm"]
 
 
