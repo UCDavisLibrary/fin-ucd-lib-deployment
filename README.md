@@ -93,12 +93,15 @@ First, make a directory for this project on your local disk, enter it, and clone
 
 Next, retrieve all the additional repositories needed to run this application. In the project directory (not this repo), clone all repositories listed in the `ALL_GIT_REPOSITORIES` variable in `config.sh`. Make sure that each repository is on the branch you want. It is up to you the developer to ensure your development repositories are at the same branch/tag as this deployment. Next, in this repository, link these repositories with `./cmds/init-local-dev.sh`.
 
-Generate a docker compose file for local development by running:
+Connect to Keycloak and generate a docker compose file for local development by running:
 ```bash
 npm install -g @ucd-lib/cork-template
+./cmds/update-local-dev-keycloak.sh
 ./cmds/generate-deployment-files.sh
 ```
 This will create a new docker-compose.yaml in `/fin-local-dev`.  Note, git ignores this yaml file so you can make local changes that won't affect other developers, any changes will be wiped each time your run `./cmds/generate-deployment-files.sh`.
+
+Then rebuild the docker images with `./cmds/build-local-dev.sh`.
 
 You will need to create a `.env` file in the `/fin-local-dev` directory, here is a sample:
 
@@ -109,6 +112,12 @@ JWT_TTL=86400
 JWT_VERBOSE=false
 FIN_URL=http://localhost:3000
 CAS_URL=https://ssodev.ucdavis.edu/cas
+
+OIDC_CLIENT_ID=dams-local-dev
+OIDC_BASE_URL=https://keycloak:8443/realms/dams-local-dev
+OIDC_SECRET=xxxxx
+DATA_ENV=sandbox
+JWT_JWKS_URI=http://keycloak:8080/realms/dams-local-dev/protocol/openid-connect/certs
 ```
 
 Finally, create the `:local-dev` tagged images used by the `fin-local-dev/docker-compose.yaml` file with `./cmds/build-local-dev.sh`. You should never push these local-dev images to Docker Hub.
