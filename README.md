@@ -166,3 +166,9 @@ git checkout <whatever you are working on>
 cd collection/ex1-pets
 FCREPO_DIRECT_ACCESS=true FCREPO_SUPERUSER=true fin io import ex1-pets .
 ```
+
+## Administering Keycloak
+
+Navigate to `http://localhost:8081/` to access the admin console. Change from the `Master` realm to the `dams-local-dev` realm.
+
+Clients are the applications/services that can request authentication from a user. In this case, the `dams-local-dev` client has the application config for DAMS. Under `Users` you can add users and roles for users. However you shouldn't need to create a user manually, instead navigating to `http://localhost:3000/auth/keycloak-oidc/login` should prompt for the CAS login, and your user will be created automatically. You can come to the admin console after to add the admin role to the user.
