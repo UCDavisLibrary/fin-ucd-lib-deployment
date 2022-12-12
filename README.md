@@ -93,7 +93,7 @@ First, make a directory for this project on your local disk, enter it, and clone
 
 Next, retrieve all the additional repositories needed to run this application. In the project directory (not this repo), clone all repositories listed in the `ALL_GIT_REPOSITORIES` variable in `config.sh`. Make sure that each repository is on the branch you want. It is up to you the developer to ensure your development repositories are at the same branch/tag as this deployment. Next, in this repository, link these repositories with `./cmds/init-local-dev.sh`.
 
-Connect to Keycloak and generate a docker compose file for local development by running:
+Create Keycloak config files and generate a docker compose file for local development by running:
 ```bash
 npm install -g @ucd-lib/cork-template
 ./cmds/update-local-dev-keycloak.sh
