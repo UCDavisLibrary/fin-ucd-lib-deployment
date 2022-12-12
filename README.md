@@ -91,11 +91,10 @@ When running applications locally, we follow a few best practices to make develo
 
 First, make a directory for this project on your local disk, enter it, and clone this repository. Checkout the version/branch/tag you want to work from.
 
-Next, retrieve all the additional repositories needed to run this application. In the project directory (not this repo), clone all repositories listed in the `ALL_GIT_REPOSITORIES` variable in `config.sh`. Make sure that each repository is on the branch you want. It is up to you the developer to ensure your development repositories are at the same branch/tag as this deployment. Next, in this repository, link these repositories with `./cmds/init-local-dev.sh`.
+Next, retrieve all the additional repositories needed to run this application. In the project directory (not this repo), clone `fin-server` and `fin-example-repository`. Make sure that each repository is on the branch you want. It is up to you the developer to ensure your development repositories are at the same branch/tag as this deployment. Next, in this repository, link the `fin-server` `services` with `./cmds/init-local-dev.sh`.
 
-Create Keycloak config files and generate a docker compose file for local development by running:
+Create the Keycloak config files and generate a docker compose file for local development by running:
 ```bash
-npm install -g @ucd-lib/cork-template
 ./cmds/update-local-dev-keycloak.sh
 ./cmds/generate-deployment-files.sh
 ```
