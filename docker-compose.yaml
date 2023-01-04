@@ -9,7 +9,7 @@ services:
   # Font End NodeJS Application Server
   ###
   server:
-    image: ucdlib/fin-ucd-lib-server-impl:v1.3.4
+    image: ucdlib/fin-ucd-lib-server-impl:v1.3.5
     volumes:
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
     ports:
@@ -66,7 +66,7 @@ services:
   # UC DAMS Client UI
   ###
   ucd-lib-client:
-    image: ucdlib/fin-ucd-lib-client:v1.0.1
+    image: ucdlib/fin-ucd-lib-client:v1.1.0
     volumes:
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
     env_file:
@@ -78,7 +78,7 @@ services:
   # ES Indexer
   ###
   essync:
-    image: ucdlib/fin-essync:v1.0.1
+    image: ucdlib/fin-essync:v1.1.0
     volumes:
       - ${GCLOUD_SERVICE_ACCOUNT_MOUNT:-service-account}:/etc/fin/webapp-service-account.json
     env_file:
@@ -90,7 +90,7 @@ services:
   # Search
   ###
   elasticsearch:
-    image: ucdlib/fin-elasticsearch:v1.0.1
+    image: ucdlib/fin-elasticsearch:v1.1.0
     ulimits:
       memlock:
         soft: -1
