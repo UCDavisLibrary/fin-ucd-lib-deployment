@@ -6,10 +6,10 @@
 
 # Main version number we are tagging the app with. Always update
 # this when you cut a new version of the app!
-APP_VERSION=v1.3.4
+APP_VERSION=v1.3.5
 
 CORE_SERVER_REPO_TAG=v1.3.0
-UCD_LIB_SERVER_REPO_TAG=v1.0.1
+UCD_LIB_SERVER_REPO_TAG=v1.1.0
 LORIS_SERVICE_REPO_TAG=v1.0.0
 TESSERACT_SERVICE_REPO_TAG=v1.0.1
 CAS_SERVICE_REPO_TAG=v1.0.1
